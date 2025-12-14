@@ -21,8 +21,7 @@ USER appuser
 # Expose the default port
 EXPOSE 8010
 
-# Environment variables with defaults
-ENV CALCOM_API_KEY=""
+# Environment variables with defaults (API key passed at runtime only)
 ENV CALCOM_API_BASE_URL="https://api.cal.com/v2"
 ENV MCP_PORT=8010
 
