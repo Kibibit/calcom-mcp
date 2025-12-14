@@ -23,10 +23,12 @@ mcp = FastMCP(
     description="A FastMCP server to interact with the Cal.com API, enabling LLMs to manage bookings, event types, and more."
 )
 
-# Get Cal.com API key from environment variable
+# Get Cal.com API configuration from environment variables
 CALCOM_API_KEY = os.getenv("CALCOM_API_KEY")
-print(f"Cal.com API Key: {CALCOM_API_KEY}")
-CALCOM_API_BASE_URL = "https://api.cal.com/v2"
+CALCOM_API_BASE_URL = os.getenv("CALCOM_API_BASE_URL", "https://api.cal.com/v2").rstrip("/")
+
+print(f"Cal.com API Key: {'***' + CALCOM_API_KEY[-4:] if CALCOM_API_KEY else 'NOT SET'}")
+print(f"Cal.com API Base URL: {CALCOM_API_BASE_URL}")
 
 @mcp.tool()
 def get_api_status() -> str:

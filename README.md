@@ -9,7 +9,96 @@ This project provides a FastMCP server for interacting with the Cal.com API. It 
 - Python 3.8+
 - A Cal.com account and API Key (v2)
 
-## Setup
+---
+
+## 🐳 Docker Deployment (Recommended for Unraid)
+
+### Quick Start with Docker Compose
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Danielpeter-99/calcom-mcp.git
+   cd calcom-mcp
+   ```
+
+2. **Create your `.env` file:**
+   ```bash
+   cp env.example .env
+   ```
+
+3. **Edit `.env` with your configuration:**
+   ```bash
+   # Required: Your Cal.com API Key
+   CALCOM_API_KEY=cal_live_your_api_key_here
+   
+   # For self-hosted Cal.com instances:
+   CALCOM_API_BASE_URL=https://cal-api.kibibit.io/v2
+   
+   # Port for MCP server
+   MCP_PORT=8010
+   ```
+
+4. **Build and run:**
+   ```bash
+   docker-compose up -d --build
+   ```
+
+5. **Verify it's running:**
+   ```bash
+   docker logs calcom-mcp
+   ```
+
+### Unraid Community Applications Setup
+
+If you prefer to set up the container manually in Unraid:
+
+1. **Go to Docker tab** → **Add Container**
+
+2. **Configure the container:**
+   | Field | Value |
+   |-------|-------|
+   | Name | `calcom-mcp` |
+   | Repository | Build from source or use pre-built image |
+   | Network Type | `bridge` |
+   | Port Mapping | Host: `8010` → Container: `8010` |
+
+3. **Add Environment Variables:**
+   - `CALCOM_API_KEY` = `your_api_key_here` (required)
+   - `CALCOM_API_BASE_URL` = `https://cal-api.kibibit.io/v2`
+   - `MCP_PORT` = `8010`
+
+4. **Apply and start the container**
+
+### Building the Docker Image Manually
+
+```bash
+# Build the image
+docker build -t calcom-mcp:latest .
+
+# Run the container
+docker run -d \
+  --name calcom-mcp \
+  --restart unless-stopped \
+  -p 8010:8010 \
+  -e CALCOM_API_KEY="your_api_key_here" \
+  -e CALCOM_API_BASE_URL="https://cal-api.kibibit.io/v2" \
+  calcom-mcp:latest
+```
+
+### Self-Hosted Cal.com Configuration
+
+For self-hosted Cal.com instances like yours at `cal.kibibit.io`:
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `CALCOM_API_BASE_URL` | Your Cal.com API endpoint (with `/v2`) | `https://cal-api.kibibit.io/v2` |
+| `CALCOM_API_KEY` | API key from your Cal.com instance | Get from Settings → Developer → API Keys |
+
+**Note:** The API base URL should point to your API subdomain (`cal-api.kibibit.io`), not your main Cal.com UI (`cal.kibibit.io`).
+
+---
+
+## Local Development Setup
 
 1.  **Clone the repository (if applicable) or download the files.**
     ```bash
@@ -34,12 +123,14 @@ This project provides a FastMCP server for interacting with the Cal.com API. It 
     -   **Linux/macOS:**
         ```bash
         export CALCOM_API_KEY="your_actual_api_key_here"
+        export CALCOM_API_BASE_URL="https://cal-api.kibibit.io/v2"  # For self-hosted
         ```
         To make it permanent, add this line to your shell configuration file (e.g., `.bashrc`, `.zshrc`).
 
     -   **Windows (PowerShell):**
         ```powershell
         $env:CALCOM_API_KEY="your_actual_api_key_here"
+        $env:CALCOM_API_BASE_URL="https://cal-api.kibibit.io/v2"  # For self-hosted
         ```
         To make it permanent, you can set it through the System Properties > Environment Variables.
 
@@ -52,6 +143,28 @@ fastmcp run app.py --transport sse --port 8010
 ```
 
 The server will start at localhost:8010, and you should see output indicating it's running. If the `CALCOM_API_KEY` is not set, a warning will be displayed.
+
+---
+
+## Connecting to MCP Clients
+
+### Claude Desktop / Cursor / Other MCP Clients
+
+Add this to your MCP client configuration:
+
+```json
+{
+  "mcpServers": {
+    "calcom": {
+      "url": "http://YOUR_UNRAID_IP:8010/sse"
+    }
+  }
+}
+```
+
+Replace `YOUR_UNRAID_IP` with your Unraid server's IP address (e.g., `192.168.1.100`).
+
+---
 
 ## Available Tools
 
@@ -77,7 +190,7 @@ The server currently provides the following tools for LLM interaction:
 
 ## Development Notes
 
--   The Cal.com API base URL is set to `https://api.cal.com/v2`.
+-   The Cal.com API base URL is configurable via the `CALCOM_API_BASE_URL` environment variable (defaults to `https://api.cal.com/v2`).
 -   Authentication is primarily handled using a Bearer token with the `CALCOM_API_KEY`.
 -   The `create_booking` tool uses the `cal-api-version: 2024-08-13` header as specified in the Cal.com API v2 documentation for that endpoint.
 -   Error handling is included in the API calls to provide informative responses.
@@ -87,6 +200,7 @@ The server currently provides the following tools for LLM interaction:
 [![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python&logoColor=white)](https://www.python.org/)  
 [![FastMCP](https://img.shields.io/badge/FastMCP-Framework-8A2BE2?logo=fastapi&logoColor=white)](https://github.com/jlowin/fastmcp)  
 [![Cal.com API](https://img.shields.io/badge/Cal.com%20API-v2-00B8A9?logo=google-calendar&logoColor=white)](https://cal.com/docs/api-reference/v2/introduction)  
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 
 
 ## Important Security Note

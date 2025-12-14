@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  calcom-mcp:
+    build: .
+    image: calcom-mcp:latest
+    container_name: calcom-mcp
+    restart: unless-stopped
+    ports:
+      - "8010:8010"
+    environment:
+      # Required: Your Cal.com API key
+      - CALCOM_API_KEY=${CALCOM_API_KEY}
+      # Your self-hosted Cal.com API URL (without trailing slash)
+      - CALCOM_API_BASE_URL=${CALCOM_API_BASE_URL:-https://cal-api.kibibit.io/v2}
+      # Port for the MCP server (change if needed)
+      - MCP_PORT=8010
+    # Optional: Use .env file for secrets
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8010/sse', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    # Resource limits (adjust based on your Unraid setup)
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+
