@@ -25,9 +25,9 @@ EXPOSE 8010
 ENV CALCOM_API_BASE_URL="https://api.cal.com/v2"
 ENV MCP_PORT=8010
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:${MCP_PORT}/health', timeout=5)" || exit 1
+# Health check - FastMCP exposes /sse endpoint
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD python -c "import requests; r = requests.get('http://localhost:${MCP_PORT}/sse', timeout=5, stream=True); r.close()" || exit 1
 
 # Run the FastMCP server with SSE transport
 CMD ["sh", "-c", "fastmcp run app.py --transport sse --port ${MCP_PORT} --host 0.0.0.0"]

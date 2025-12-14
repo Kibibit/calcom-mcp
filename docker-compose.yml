@@ -18,12 +18,6 @@ services:
     # Optional: Use .env file for secrets
     env_file:
       - .env
-    healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8010/sse', timeout=5)"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
     # Resource limits (adjust based on your Unraid setup)
     deploy:
       resources:
