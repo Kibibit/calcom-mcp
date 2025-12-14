@@ -18,10 +18,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Initialize the FastMCP server
-mcp = FastMCP(
-    name="Cal.com MCP Server",
-    description="A FastMCP server to interact with the Cal.com API, enabling LLMs to manage bookings, event types, and more."
-)
+mcp = FastMCP("Cal.com MCP Server")
 
 # Get Cal.com API configuration from environment variables
 CALCOM_API_KEY = os.getenv("CALCOM_API_KEY")
