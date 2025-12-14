@@ -1,0 +1,23 @@
+Dockerfile
+  42e0195b2aa21e42 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.0.24",
+  "base_commit_sha": "4aeae464cef20e83a9399f82c2c1a3de3fbf0932",
+  "prompts": {
+    "42e0195b2aa21e42": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "51f6714c-9374-4224-8faa-b709975c2bfe",
+        "model": "claude-4.5-opus-high-thinking"
+      },
+      "human_author": "thatkookooguy <Neilkalman@gmail.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 2,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
