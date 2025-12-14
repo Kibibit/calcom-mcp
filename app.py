@@ -12,17 +12,33 @@ Disclaimer: This project is not affiliated with or endorsed by Cal.com in any wa
 import os
 import requests
 from fastmcp import FastMCP
+from fastmcp.server.auth import BearerAuthProvider
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Initialize the FastMCP server
-mcp = FastMCP("Cal.com MCP Server")
-
 # Get Cal.com API configuration from environment variables
 CALCOM_API_KEY = os.getenv("CALCOM_API_KEY")
 CALCOM_API_BASE_URL = os.getenv("CALCOM_API_BASE_URL", "https://api.cal.com/v2").rstrip("/")
+MCP_AUTH_TOKEN = os.getenv("MCP_AUTH_TOKEN")
+
+# Set up authentication if token is configured
+auth_provider = None
+if MCP_AUTH_TOKEN:
+    async def verify_token(token: str) -> str | None:
+        """Verify the bearer token matches our secret."""
+        if token == MCP_AUTH_TOKEN:
+            return "authenticated_user"
+        return None
+    
+    auth_provider = BearerAuthProvider(verify_token=verify_token)
+    print("MCP Auth: Bearer token authentication ENABLED")
+else:
+    print("MCP Auth: No authentication (MCP_AUTH_TOKEN not set)")
+
+# Initialize the FastMCP server with optional auth
+mcp = FastMCP("Cal.com MCP Server", auth=auth_provider)
 
 print(f"Cal.com API Key: {'***' + CALCOM_API_KEY[-4:] if CALCOM_API_KEY else 'NOT SET'}")
 print(f"Cal.com API Base URL: {CALCOM_API_BASE_URL}")
